@@ -6,7 +6,7 @@ services:
     image: 0tchenash/docker
     build: .
     ports:
-      - "80:8080"
+      - "8080:8080"
     restart: always
     depends_on:
       - pg
