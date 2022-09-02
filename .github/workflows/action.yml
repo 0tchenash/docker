@@ -1,7 +1,7 @@
 name: CI
 on: [push]
 jobs:
-  build:
+  build_and_push:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
@@ -14,20 +14,22 @@ jobs:
         run: docker push ${{ secrets.DOCKER_NAME }}/docker
   deploy:
     runs-on: ubuntu-latest
+    needs: build_and_push
     steps:
       - name: clone code
         uses: actions/checkout@v2
       - name: render configs
         run: |
           mkdir deploy
-          cat docker-compose.yml | envsubst > deploy/docker-compose.yml
+          cat docker-compose-ci.yml | envsubst > deploy/docker-compose.yml
+          cat docker-ci-config.py | envsubst > deploy/docker-config.py
       - name: copy files to server
         uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
-          source: "deploy/docker-compose.yml"
+          source: "deploy/docker-compose.yml, deploy/docker-config.py"
           target: "docker"
           strip_components: 1
       - name: deploy app
