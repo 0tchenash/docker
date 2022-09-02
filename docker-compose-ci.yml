@@ -10,8 +10,7 @@ services:
     volumes:
       - ./docker_config.py:/code/default_config.py
     depends_on:
-      pg:
-        condition: service_healthy
+      - pg
 
   pg:
     image: postgres:latest

@@ -9,8 +9,7 @@ services:
       - "80:8080"
     restart: always
     depends_on:
-      pg:
-        condition: service_healthy
+      - pg
   pg:
     image: postgres:latest
     environment:
